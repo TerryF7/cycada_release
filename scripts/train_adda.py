@@ -1,24 +1,24 @@
 import os
 from os.path import join
 
-from cycada.tools.train_task_net import train as train_source
+import numpy as np
+import torch
 from cycada.tools.test_task_net import load_and_test_net
 from cycada.tools.train_adda_net import train_adda
-import torch
-import numpy as np
+from cycada.tools.train_task_net import train as train_source
 
-# set random seed to 4325 
+# set random seed to 4325
 # to reproduce the exact numbers
 np.random.seed(4325)
 
 ###################################
 # Set to your preferred data path #
 ###################################
-datadir = '/x/jhoffman'
+datadir = "/content/cycada_release/data"
 ###################################
 
 # Choose GPU ID
-os.environ['CUDA_VISIBLE_DEVICES'] = '1' 
+os.environ['CUDA_VISIBLE_DEVICES'] = '0' 
 
 # Problem Params
 src = 'mnist'
@@ -32,7 +32,7 @@ num_cls = 10
 
 # Output directory
 outdir = 'results/{}_to_{}/iter_{}'.format(src, tgt, iteration)
-#outdir = 'results/{}_to_{}'.format(src, tgt)
+# outdir = 'results/{}_to_{}'.format(src, tgt)
 
 # Optimization Params
 betas = (0.9, 0.999) # Adam default

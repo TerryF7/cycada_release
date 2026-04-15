@@ -32,7 +32,7 @@ class USPS(data.Dataset):
     Images are 16x16 grayscale images in the range [0, 1].
     """
 
-    base_url = 'http://statweb.stanford.edu/~tibs/ElemStatLearn/datasets/'
+    base_url = "https://web.stanford.edu/~hastie/ElemStatLearn/datasets/"
 
     data_files = {
         'train': 'zip.train.gz',
@@ -47,7 +47,7 @@ class USPS(data.Dataset):
         self.train = train
         self.transform = transform
         self.target_transform = target_transform
-	
+
         if download:
             self.download()
 
@@ -57,7 +57,7 @@ class USPS(data.Dataset):
             datapath = os.path.join(self.root, self.data_files['test'])
 
         self.images, self.targets = self.read_data(datapath)
-    
+
     def get_path(self, filename):
         return os.path.join(self.root, filename)
 
