@@ -21,7 +21,7 @@ np.random.seed(4325)
 ###################################
 # Set to your preferred data path #
 ###################################
-datadir = "/content/drive/My Drive/cycada_release/data/Office-31"
+datadir = "/content/drive/My Drive/cycada_release/data"
 ###################################
 
 # Choose GPU ID
