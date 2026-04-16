@@ -28,14 +28,28 @@ datadir = "/content/cycada_release/data"
 os.environ['CUDA_VISIBLE_DEVICES'] = '0' 
 
 # Problem Params
-src = 'mnist'
+
+# m->u
+src = 'mnist2usps'
 tgt = 'usps'
+num_cls = 10
+
+# # s->m
+# src = 'svhn2mnist'
+# tgt = 'mnist'
+# num_cls = 10
+
+# # a-> w
+# src = 'amazon2webcam'
+# tgt = 'webcam'
+# num_cls = 31
+
 iteration = 1 #'no_cycle' 
 
 base_src = src.split('2')[0]
 
 model = 'LeNet'
-num_cls = 10
+
 
 # Output directory
 outdir = 'results/{}_to_{}/iter_{}'.format(src, tgt, iteration)
@@ -47,10 +61,10 @@ weight_decay = 0 # Adam default
 batch = 128
 
 src_lr = 1e-4
-src_num_epoch = 100
+src_num_epoch = 5
 src_datadir = join(datadir, src)
 src_net_file = join(outdir, '{}_net_{}.pth'.format(model, src)) 
-adda_num_epoch = 200
+adda_num_epoch = 5
 adda_lr = 1e-5
 adda_net_file = join(outdir, 'adda_{:s}_net_{:s}_{:s}.pth'
         .format(model, src, tgt))
