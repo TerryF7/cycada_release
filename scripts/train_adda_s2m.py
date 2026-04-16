@@ -21,7 +21,7 @@ np.random.seed(4325)
 ###################################
 # Set to your preferred data path #
 ###################################
-datadir = "/content/cycada_release/data"
+datadir = "/content/drive/My Drive/cycada_release/data"
 ###################################
 
 # Choose GPU ID
@@ -29,20 +29,10 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 # Problem Params
 
-# m->u
-src = 'mnist2usps'
-tgt = 'usps'
+# s->m
+src = 'svhn2mnist'
+tgt = 'mnist'
 num_cls = 10
-
-# # s->m
-# src = 'svhn2mnist'
-# tgt = 'mnist'
-# num_cls = 10
-
-# # a-> w
-# src = 'amazon2webcam'
-# tgt = 'webcam'
-# num_cls = 31
 
 iteration = 1 #'no_cycle' 
 
