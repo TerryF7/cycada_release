@@ -18,13 +18,58 @@ class CycleGANDataset(data.Dataset):
 
         self.image_paths, self.labels = self.find_images(regexp)
 
+    @staticmethod
+    def _parse_filename_label(path):
+        """Parse label from filename when encoded as numeric prefix.
+
+        Supported formats:
+        - <label>_xxx.png
+        - frame_<label>_xxx.png
+        """
+        stem = os.path.splitext(os.path.basename(path))[0]
+        parts = stem.split('_')
+        if parts and parts[0].isdigit():
+            return int(parts[0])
+        if len(parts) > 1 and parts[0] == 'frame' and parts[1].isdigit():
+            return int(parts[1])
+        return None
+
     def find_images(self, regexp='*.png'):
-        basenames = sorted(glob.glob(join(self.root, regexp)))
+        basenames = sorted(glob.glob(join(self.root, '**', regexp), recursive=True))
         image_paths = []
         labels = []
-        for basename in basenames:
-            image_paths.append(os.path.join(self.root, basename))
-            labels.append(int(basename.split('/')[-1].split('_')[0]))
+        unresolved = []
+
+        # First pass: parse labels from filenames when available.
+        for path in basenames:
+            label = self._parse_filename_label(path)
+            if label is not None:
+                image_paths.append(path)
+                labels.append(label)
+            else:
+                unresolved.append(path)
+
+        if not unresolved:
+            return image_paths, labels
+
+        # Second pass: parse labels from parent folder names.
+        class_name_to_id = {}
+        class_names = sorted({os.path.basename(os.path.dirname(path)) for path in unresolved})
+        next_class_id = 0
+        for class_name in class_names:
+            if class_name.startswith('class_') and class_name[len('class_'):].isdigit():
+                class_name_to_id[class_name] = int(class_name[len('class_'):])
+            elif class_name.isdigit():
+                class_name_to_id[class_name] = int(class_name)
+            else:
+                class_name_to_id[class_name] = next_class_id
+                next_class_id += 1
+
+        for path in unresolved:
+            class_name = os.path.basename(os.path.dirname(path))
+            image_paths.append(path)
+            labels.append(class_name_to_id[class_name])
+
         return image_paths, labels
 
     def __getitem__(self, index):
