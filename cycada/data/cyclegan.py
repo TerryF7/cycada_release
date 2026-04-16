@@ -92,6 +92,14 @@ class Office31DomainDataset(data.Dataset):
 
     IMG_EXTS = ('*.png', '*.jpg', '*.jpeg', '*.bmp', '*.webp')
 
+    @staticmethod
+    def _parse_dir_label(class_name):
+        if class_name.startswith('class_') and class_name[len('class_'):].isdigit():
+            return int(class_name[len('class_'):])
+        if class_name.isdigit():
+            return int(class_name)
+        return None
+
     def __init__(self, root, train=True, transform=None, target_transform=None,
             download=False):
         self.root = root
@@ -115,7 +123,18 @@ class Office31DomainDataset(data.Dataset):
 
         # Preferred layout: root/class_x/*.jpg
         if class_dirs:
-            for class_idx, class_name in enumerate(class_dirs):
+            raw_class_labels = []
+            for class_name in class_dirs:
+                parsed = self._parse_dir_label(class_name)
+                raw_class_labels.append(parsed if parsed is not None else class_name)
+
+            # Always map to contiguous [0, C-1] to match CE loss expectations.
+            class_map = {
+                raw_label: idx for idx, raw_label in enumerate(sorted(set(raw_class_labels), key=lambda x: str(x)))
+            }
+
+            for class_name, raw_label in zip(class_dirs, raw_class_labels):
+                class_idx = class_map[raw_label]
                 class_root = join(root_dir, class_name)
                 for ext in self.IMG_EXTS:
                     for path in sorted(glob.glob(join(class_root, ext))):
